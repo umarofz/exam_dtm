@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .main {
+    }
+    .container {
+        max-width: 1240px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .main__container {
+    }
+    .main__heading {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 35px;
+        line-height: 52px;
+        color: #000000;
+        text-align: center;
+    }
+    .main__wraper {
+        display: flex;
+        align-items: center;
+        gap: 458px;
+        margin-bottom: 100px;
+    }
+    .main__num {
+        background: #FFFFFF;
+        border: 1px solid #AEAEAE;
+        border-radius: 50%;
+        padding: 6px 20px;
+    }
+    .main__number {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 35px;
+        line-height: 52px;
+        color: #000000;
+    }
+    .main__form {
+        display: flex;
+        flex-direction: column;
+        width: 540px;
+    }
+    .main__select {
+        background: #FFFFFF;
+        border: 1px solid #AEAEAE;
+        border-radius: 20px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        padding-left: 24px;
+        margin-bottom: 50px;
+    }
+    .main__option {
+    }
+    .form__btn {
+        background: #FFFFFF;
+        border: 1px solid #18A0FB;
+        border-radius: 20px;
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 27px;
+        color: #000000;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    form > label {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 24px;
+        line-height: 36px;
+        margin-bottom: 16px;
+        color: #000000;
+    }
+</style>
+<body>
+    <section class="main">
+        <div class="container">
+            <div class="main__container">
+                <h1 class="main__heading">Assosiy Imtihonga hush kelibsiz</h1>
+                <div class="main__wraper">
+                    <div class="main__num">
+                        <span class="main__number">1</span>
+                    </div>
+                    <div class="main__num">
+                        <span class="main__number">2</span>
+                    </div>
+                    <div class="main__num">
+                        <span class="main__number">3</span>
+                    </div>
+                </div>
+                
+                <form class="main__form" action="">
+                    <label for="select">
+                        Fan tanlang
+                    </label>
+                    <select class="main__select" name="" id="select" required>
+                        <option class="main__option" value="1" disabled>Fan tanlang</option>
+                    </select>
+                    
+                    <button class="form__btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+
+<script>
+    if (!(localStorage.getItem('token'))) {
+        window.location.href = '/login'
+    }
+    const form = document.querySelector('.main__form')
+    const select = document.querySelector('.main__select')
+    
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+    
+    fetch("http://localhost:5000/fan", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+        const data = JSON.parse(result)
+        select.innerHTML = null;
+        for (const item of data.data) {
+            option = document.createElement('option')
+            option.textContent = item.fan_name;
+            option.classList.add('main__option')
+            option.value = item.fan_id;
+            select.appendChild(option)
+        }
+    })
+    .catch(error => console.log('error', error));
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        
+        var raw = JSON.stringify({
+            "fanId": select.value
+        });
+        
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        
+        fetch("http://localhost:5000/fan", requestOptions)
+        .then(response => response.text())
+        .then(result => {
+            if (result) {
+                localStorage.setItem('time_data', result)
+                localStorage.setItem('fan_id', select.value)
+                
+                window.location.href = '/university'
+            }
+        })
+        .catch(error => console.log('error', error));
+    })
+</script>
+</html>

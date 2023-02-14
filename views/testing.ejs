@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    .test {
+    }
+    .container {
+        max-width: 1240px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+    .test__container {
+    }
+    .test__form {
+    }
+    .test__help {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 40px;
+        color: #000000;
+    }
+    .test__question {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 40px;
+        color: #000000;
+    }
+    .test__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+    }
+    .test__hr {
+        margin-top: 50px;
+        border: 1px solid #AAAAAA;
+    }
+</style>
+<body>
+    <section class="test">
+        <div class="container">
+            <div class="test__container">
+                <form action="" class="test__form">
+                    <label for="">
+                        <p class="test__help">#1 Choose the answer which correctly completes the sentence.</p>
+                        <p class="test__question">When I got home I found an envelope on the table. In it was a … card from Aunt Alice for passing my French exam.</p>
+                        <div class="test__wrapper">
+                            <div class=""><input type="radio" value="congratulation's" name="1" id="correct1">congratulation's</div>
+                            <div class=""><input type="radio" value="congratulations" name="1">congratulations</div>
+                            <div class=""><input type="radio" value="congratulation" name="1" id="">congratulation</div>
+                        </div>
+                        
+                        <hr class="test__hr">
+                    </label>
+                    <button>submit</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    
+    <template id="test__template">
+        <label for="">
+            <p class="test__help">#<span class="test__span">1</span> Choose the answer which correctly completes the sentence.</p>
+            <p class="test__question">When I got home I found an envelope on the table. In it was a … card from Aunt Alice for passing my French exam.</p>
+            <div class="test__wrapper">
+                <div class="test__wrapper-wrapper1"><input class="test__radio1" type="radio" value="congratulation's" name="1" id="correct1">congratulation's</div>
+                <div class="test__wrapper-wrapper2"><input class="test__radio2" type="radio" value="congratulations" name="1">congratulations</div>
+                <div class="test__wrapper-wrapper3"><input class="test__radio3" type="radio" value="congratulation" name="1" id="">congratulation</div>
+            </div>
+            
+            <hr class="test__hr">
+        </label>
+    </template>
+</body>
+
+<script>
+    var score = 0;
+    const form =  document.querySelector('.test__form');
+    const wrapper =  document.querySelector('.test__wrapper');
+    const template =  document.querySelector('#test__template').content;
+    const fanId = localStorage.getItem('fan_id')
+    
+    
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({
+        "fanId": JSON.parse(fanId)
+    });
+    
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+    
+    fetch("http://localhost:5000/testing", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+        const data = JSON.parse(result)
+        wrapper.innerHTML = null
+        let tempFragment = document.createDocumentFragment();
+        for (const item of data.data) {
+            let templateItem = template.cloneNode(true)
+            templateItem.querySelector('.test__span').textContent = item.question_id;
+            templateItem.querySelector('.test__question').textContent = item.question;
+            templateItem.querySelector('.test__wrapper-wrapper1').innerHTML = `<input class="test__radio1" type="radio" value="congratulation's" name="${item.question_id}" id="correct1">${item.question_variant_1}`;
+            templateItem.querySelector('.test__wrapper-wrapper2').innerHTML = `<input class="test__radio1" type="radio" value="congratulation's" name="${item.question_id}" id="correct1">${item.question_variant_2}`;
+            templateItem.querySelector('.test__wrapper-wrapper3').innerHTML = `<input class="test__radio1" type="radio" value="congratulation's" name="${item.question_id}" id="correct1">${item.question_variant_3}`;
+            
+            tempFragment.appendChild(templateItem)
+        }
+        
+        wrapper.appendChild(tempFragment)
+    })
+    .catch(error => console.log('error', error));
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        
+        function getRandomNumber(){
+            return Math.floor(Math.random() * (86 - 24 + 1) + 24);
+        }
+        console.log(getRandomNumber());
+    })
+</script>
+</html>

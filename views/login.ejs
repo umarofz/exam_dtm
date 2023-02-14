@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<style>
+    p, h1, h2, h3, h4, h5, h6 {
+        margin: 0;
+        padding: 0;
+    }
+    .register {
+        background: #FFFFFF;
+        box-shadow: 0px 2px 25px rgba(187, 187, 187, 0.35);
+        border-radius: 20px;
+        margin-left: 35%;
+        margin-right: 30%;
+    }
+    .container {
+        max-width: 1240px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .register__container {
+    }
+    .register__form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 25px;
+    }
+    .register__heading {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 35px;
+        line-height: 52px;
+        color: #000000;
+    }
+    .register__btn {
+        background: #FFFFFF;
+        border: 1px solid #18A0FB;
+        border-radius: 20px;
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 27px;
+        padding: 10px 50px 10px 50px;
+        width: 360px;
+        color: #000000;
+    }
+    .register__link {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        color: #000000;
+    }
+    .register_input{
+        border: none;
+        outline: none;
+        padding: 10px;
+        border-bottom: 1px solid #BBBBBB;
+        width: 350px;
+    }
+    .register__wrapper {
+        display: flex;
+    }
+</style>
+<body>
+    <section class="register">
+        <div class="container">
+            <div class="register__container">
+                <form action="" class="register__form">
+                    <h1 class="register__heading">Kirish</h1>
+                    <label for="">
+                        <input type="text" class="register_input register_input-username" placeholder="Username" required>
+                    </label>
+                    <label for="">
+                        <input type="password" class="register_input register_input-password" placeholder="Password" required>
+                    </label>
+                    
+                    <button class="register__btn">Royhatdan otish</button>
+                    <h3 class="register__link">Hisobingiz yo'qmi? <a href="/register">Kirish</a></h3>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+
+<script>
+    const form = document.querySelector('.register__form');
+    const username = document.querySelector('.register_input-username');
+    const password = document.querySelector('.register_input-password');
+    
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        
+        var raw = JSON.stringify({
+            "username": username.value,
+            "password": password.value
+        });
+        
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        
+        fetch("http://localhost:5000/login", requestOptions)
+        .then(response => response.text())
+        .then(result => {
+            const data = JSON.parse(result)
+
+            if (data.token != undefined && data.token != null) {
+                localStorage.setItem('token', data.token)
+
+                window.location.href = '/'
+            }
+        })
+        .catch(error => console.log('error', error));
+    })
+    
+</script>
+</html>
